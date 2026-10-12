@@ -123,7 +123,7 @@ jobs:
         run: dotnet test TruckModsListUpdater.slnx --configuration Release --filter "Category!=LocalMachine"
 
       - name: Publish single executable
-        run: dotnet publish src/TruckModsListUpdater.App/TruckModsListUpdater.App.csproj --configuration Release --runtime win-x64 --self-contained false --output ./publish -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=none -p:MinVerVersionOverride=${{ env.VERSION }}
+        run: dotnet publish src/TruckModsListUpdater.App/TruckModsListUpdater.App.csproj --configuration Release -p:PublishProfile=win-x64 --output ./publish -p:MinVerVersionOverride=${{ env.VERSION }}
 
       - name: Verify executable version matches the release
         shell: pwsh
@@ -132,6 +132,15 @@ jobs:
           if (-not $actual.StartsWith($env:VERSION)) {
             throw "Executable reports '$actual' but the release is 'v$($env:VERSION)'"
           }
+
+      - name: Check the executable size
+        shell: pwsh
+        run: |
+          # The exe bundles the .NET and WPF runtime (about 59 MB compressed). WPF cannot be trimmed, so a jump
+          # means something was added that should be looked at (a new package, or compression turned off).
+          $mb = (Get-Item ./publish/Modshift.exe).Length / 1MB
+          Write-Host ("Modshift.exe is {0:N1} MB" -f $mb)
+          if ($mb -gt 75) { throw ("Modshift.exe is {0:N1} MB, over the 75 MB limit" -f $mb) }
 
       - name: Create ZIP archive
         run: Compress-Archive -Path ./publish/Modshift.exe -DestinationPath ./Modshift-${{ env.VERSION }}-win-x64.zip

@@ -18,11 +18,9 @@ When you are done, start the game with the right mods already active.
 
 ## Download
 
-1. Install the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
-   (choose *Desktop Runtime*, *Windows x64*). You only need to do this once.
-2. Download `Modshift-<version>-win-x64.zip` from the
+1. Download `Modshift-<version>-win-x64.zip` from the
    [latest release](https://github.com/OfficialWhiffy/Modshift/releases/latest).
-3. Unzip it and run `Modshift.exe`. There is no installer.
+2. Unzip it and run `Modshift.exe`. There is no installer.
 
 You need Windows 10 or 11, and you must have started the game at least once.
 

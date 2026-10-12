@@ -16,8 +16,14 @@ publish a release.
 ```
 dotnet build TruckModsListUpdater.slnx
 dotnet test TruckModsListUpdater.slnx --filter "Category!=LocalMachine"
-dotnet publish src/TruckModsListUpdater.App -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
+dotnet publish src/TruckModsListUpdater.App -c Release -p:PublishProfile=win-x64
 ```
+
+The publish profile ([win-x64.pubxml](src/TruckModsListUpdater.App/Properties/PublishProfiles/win-x64.pubxml))
+builds the release: one self-contained exe, so users don't install .NET. It bundles the .NET and
+WPF runtime (about 134 MB) and compresses it to about 59 MB. WPF does not support trimming, so
+`PublishTrimmed` stays off: the SDK refuses it, and forcing it past that error breaks text boxes
+at runtime. Check the size and that the exe starts after changing the profile or adding packages.
 
 The `LocalMachine` tests read a real game install. They never change it, and they are skipped when
 the game is not installed. CI does not run them.

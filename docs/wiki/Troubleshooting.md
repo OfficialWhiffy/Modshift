@@ -3,8 +3,6 @@ the bottom.
 
 ## The app does not start
 
-- **A message asks you to install .NET.** Install the .NET 10 Desktop Runtime. See
-  [Installation](Installation).
 - **"Windows protected your PC".** Click **More info**, then **Run anyway**.
 - **Nothing happens at all.** Unzip the file first and run `Modshift.exe` from the
   unzipped folder. If it still doesn't start, see [Getting help](#getting-help).

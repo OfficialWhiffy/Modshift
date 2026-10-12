@@ -7,27 +7,17 @@ This page explains how to download Modshift and start it for the first time.
 - You must have **started the game at least once**. The game creates its folder in
   `Documents` the first time it runs, and the app needs that folder.
 
-## Step 1: Install .NET
-
-The app needs Microsoft's free .NET 10 Desktop Runtime. You only need to do this once.
-
-1. Go to the [.NET 10 download page](https://dotnet.microsoft.com/download/dotnet/10.0).
-2. Find **.NET Desktop Runtime** and click the **x64** link under *Windows*.
-3. Run the file you downloaded and follow the steps.
-
-If you skip this step, Windows shows a message when you start the app, with a link to the same
-download.
-
-## Step 2: Download the app
+## Step 1: Download the app
 
 1. Open the [latest release](https://github.com/OfficialWhiffy/Modshift/releases/latest).
 2. Under **Assets**, click `Modshift-<version>-win-x64.zip`.
 3. Right-click the downloaded file and choose **Extract All**.
 4. Move `Modshift.exe` to a place you like, for example a folder on your desktop.
 
-There is no installer. The app is a single file.
+There is no installer. The app is a single file of about 60 MB, because it includes everything it
+needs to run. You don't have to install .NET or anything else.
 
-## Step 3: Start the app
+## Step 2: Start the app
 
 Double-click `Modshift.exe`.
 
