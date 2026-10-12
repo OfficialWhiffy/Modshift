@@ -46,13 +46,18 @@ jobs:
               Sort-Object -Descending |
               Select-Object -First 1
 
-            $labels = gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq '.[].labels[].name'
-            if ($labels -contains 'major')     { $next = [version]"$($latest.Major + 1).0.0" }
-            elseif ($labels -contains 'minor') { $next = [version]"$($latest.Major).$($latest.Minor + 1).0" }
-            else                               { $next = [version]"$($latest.Major).$($latest.Minor).$($latest.Build + 1)" }
+            if ($null -eq $latest) {
+              # No release tag yet (a new repository): start at the minimum version.
+              $next = [version]'2.0.0'
+            } else {
+              $labels = gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq '.[].labels[].name'
+              if ($labels -contains 'major')     { $next = [version]"$($latest.Major + 1).0.0" }
+              elseif ($labels -contains 'minor') { $next = [version]"$($latest.Major).$($latest.Minor + 1).0" }
+              else                               { $next = [version]"$($latest.Major).$($latest.Minor).$($latest.Build + 1)" }
+            }
 
-            # Matches MinVerMinimumMajorMinor in Directory.Build.props; also covers "no tags yet".
-            if ($null -eq $latest -or $next -lt [version]'2.0.0') { $next = [version]'2.0.0' }
+            # Matches MinVerMinimumMajorMinor in Directory.Build.props.
+            if ($next -lt [version]'2.0.0') { $next = [version]'2.0.0' }
             $version = $next.ToString(3)
           }
           Write-Host "Releasing v$version"
