@@ -105,7 +105,10 @@ jobs:
             }
           }
           gh release view "v$version" --repo "${{ github.repository }}" *> $null
-          if ($LASTEXITCODE -eq 0) {
+          $releaseExists = $LASTEXITCODE -eq 0
+          # "Not found" is the expected answer; the step would otherwise end with gh's exit code 1.
+          $global:LASTEXITCODE = 0
+          if ($releaseExists) {
             throw "Release v$version already exists. A published version is never replaced; delete it deliberately or push a new version."
           }
           Write-Host "Releasing v$version"
