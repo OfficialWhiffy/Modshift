@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Modshift</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2D323A"/>
+      <stop offset="1" stop-color="#171A1F"/>
+    </linearGradient>
+  </defs>
+  <!-- Dark tile, like the app's dark theme -->
+  <rect x="32" y="32" width="960" height="960" rx="224" fill="url(#bg)"/>
+  <!-- A load order: three mods, the top one shifted out of line in the app's amber accent -->
+  <rect x="342" y="231" width="520" height="150" rx="75" fill="#F2A93B"/>
+  <rect x="252" y="437" width="520" height="150" rx="75" fill="#6B7585"/>
+  <rect x="162" y="643" width="520" height="150" rx="75" fill="#434B58"/>
+  <!-- Toggle dots -->
+  <circle cx="417" cy="306" r="39" fill="#2D323A"/>
+  <circle cx="327" cy="512" r="39" fill="#2D323A"/>
+  <circle cx="237" cy="718" r="39" fill="#2D323A"/>
+</svg>

@@ -6,6 +6,7 @@
     <RootNamespace>TruckModsListUpdater.App</RootNamespace>
     <AssemblyName>Modshift</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\..\assets\icon.ico</ApplicationIcon>
     <!-- WPF Fluent theme (ThemeMode) is marked experimental. -->
     <NoWarn>$(NoWarn);WPF0001</NoWarn>
     <PublishSingleFile>true</PublishSingleFile>
