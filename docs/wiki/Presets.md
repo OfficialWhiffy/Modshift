@@ -29,7 +29,6 @@ Two presets for Euro Truck Simulator 2 are included. They are marked **Built-in*
 changed or deleted.
 
 - **ProMods**: every ProMods package and add-on, in the right order.
-- **Bozo (mp)**: ProMods plus fixes for TruckersMP and a set of graphics, traffic and sound mods.
 
 You still need to download and install the mods yourself. The preset only puts them in the right
 order. When a new ProMods version comes out, the built-in presets use it automatically once you

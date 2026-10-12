@@ -19,7 +19,7 @@ public class ProfileStoreTests
 
     [Theory]
     [InlineData("576869666679", "Whiffy")]
-    [InlineData("426F7A6F20286D7029", "Bozo (mp)")]
+    [InlineData("426F7A6F20286D7029", " (mp)")]
     [InlineData("not-hex", "not-hex")]
     public void DecodeFolderName(string folder, string expected)
     {

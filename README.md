@@ -38,8 +38,7 @@ You need Windows 10 or 11, and you must have started the game at least once.
   downloads that contain several mods. When you install a newer version of a mod you already have,
   the old version is put aside and your profiles switch to the new one.
 - **Save presets.** A preset is a saved mod list, such as "ProMods" or "TruckersMP". Apply it to
-  any profile, or share it as a `.json` file. Two presets for ETS2 are included: *ProMods* and
-  *Bozo (mp)*.
+  any profile, or share it as a `.json` file.
 - **Fix missing mods.** If a profile still points to an old mod file, one click switches it to the
   version you have installed.
 - **Clean up the mod folder.** Find broken folders, old versions and mods you never use, and move

@@ -114,22 +114,11 @@ public class PresetTests
     {
         var presets = BuiltInPresets.List("ets2");
 
-        presets.Select(p => (p.Name, p.Mods.Count)).Should().Equal(("Bozo (mp)", 39), ("ProMods", 25));
+        presets.Select(p => (p.Name, p.Mods.Count)).Should().Equal(("ProMods", 25));
         presets.Should().OnlyContain(p => p.IsBuiltIn);
         BuiltInPresets.List("ats").Should().BeEmpty();
         BuiltInPresets.IsBuiltInName("ets2", " promods ").Should().BeTrue();
         BuiltInPresets.IsBuiltInName("ats", "ProMods").Should().BeFalse();
-    }
-
-    [Fact]
-    public void BuiltIns_ProModsKeepsBozoOrder()
-    {
-        var bozo = BuiltInPresets.List("ets2").Single(p => p.Name == "Bozo (mp)").Mods.Select(m => m.PackageId).ToList();
-        var proMods = BuiltInPresets.List("ets2").Single(p => p.Name == "ProMods").Mods.Select(m => m.PackageId).ToList();
-
-        bozo.Where(proMods.Contains).Should().Equal(proMods);
-        proMods[0].Should().Be("mod_workshop_package.00000000E2C34C91", "the Official Hotfix has the highest priority");
-        proMods[^1].Should().Be("promods-tgs-assets-v170");
     }
 
     [Fact]

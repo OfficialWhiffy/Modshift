@@ -12,7 +12,7 @@ public class ActiveModsBlockTests
         " brand: \"scania\"",
         modLines,
         " customization: 7",
-        " profile_name: \"Bozo (mp)\"",
+        " profile_name: \"ProMods\"",
         "}",
         "",
         "}",
