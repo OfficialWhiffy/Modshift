@@ -56,6 +56,19 @@ public class AppVersionTests
     }
 
     [Fact]
+    public void Ordering_MatchesTheSemVerOrgExample()
+    {
+        // Precedence example from https://semver.org/#spec-item-11
+        string[] ascending =
+            ["1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta", "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0"];
+
+        var versions = ascending.Select(AppVersion.Parse).ToList();
+
+        versions.Order().Should().Equal(versions);
+        versions.Reverse<AppVersion>().Order().Should().Equal(versions);
+    }
+
+    [Fact]
     public void Build_Metadata_IsIgnoredByComparisonAndEquality()
     {
         var a = AppVersion.Parse("2.0.0+abc1234");
@@ -72,6 +85,6 @@ public class AppVersionTests
         var v = AppVersion.FromAssembly(typeof(AppVersion).Assembly);
 
         // MinVer stamps every build; the minimum is configured in Directory.Build.props.
-        v.Should().BeGreaterThanOrEqualTo(new AppVersion(2, 0, 0, "0"));
+        v.Should().BeGreaterThanOrEqualTo(new AppVersion(1, 0, 0, "0"));
     }
 }

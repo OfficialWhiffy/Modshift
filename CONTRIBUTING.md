@@ -51,25 +51,42 @@ next time it saves. Steam Cloud profiles are edited in
 
 ## Releasing
 
-Every merge to `master` publishes a release; there is no version number to edit in the code.
-The *Release* workflow takes the latest `vMAJOR.MINOR.PATCH` tag and bumps it, runs the tests,
-builds `Modshift-<version>-win-x64.zip`, checks that the executable reports that version
-and creates a GitHub release with generated notes. [MinVer](https://github.com/adamralph/minver)
-stamps the version into the executable. A build of untagged code reports something like
-`2.0.1-alpha.0.7+abc1234`.
+Versions follow [Semantic Versioning 2.0.0](https://semver.org). Every merge to `master` publishes
+a release; there is no version number to edit in the code. The *Release* workflow picks the next
+version, runs the tests, builds `Modshift-<version>-win-x64.zip`, checks that the executable reports
+that version and creates a GitHub release with generated notes.
+[MinVer](https://github.com/adamralph/minver) stamps the version into the executable. The first
+release is `v1.0.0`. A build of untagged code reports something like `1.0.1-alpha.0.7+abc1234`.
 
-The bump depends on the labels of the merged pull request:
+Modshift is an application, not a library, so the "public API" that semver talks about is what
+users and their saved data rely on:
 
-- **`major`**: saved data changes incompatibly, or behaviour people rely on is removed.
-- **`minor`**: new features.
-- no label: **patch**, for bug fixes.
+- **Saved data**: the preset file format (`schema`), the settings file, and the backups and where
+  they are restored to.
+- **What the app does to your files**: the `profile.sii` write guarantees (backup first, verify,
+  never touch `profile.bak.sii`), mods are only moved to `mod_archive` and never deleted, and
+  the layout of `mod_archive`.
+- **The download**: the release asset name `Modshift-<version>-win-x64.zip`.
 
-Merges that only touch Markdown files do not release. To publish a specific version or a
-pre-release, push a tag instead; a suffix such as `v2.1.0-beta.1` marks it as a pre-release:
+Window layout, wording, the log format and the code itself are not part of it.
+
+The bump follows from the merged pull request's labels:
+
+- **`major`**: an incompatible change to the list above. Saved data from an older version no
+  longer loads, a safety guarantee is dropped, or behaviour people rely on is removed.
+- **`minor`**: new backward-compatible functionality. Also deprecating something on the list above.
+- no label: **patch**, for backward-compatible bug fixes.
+
+A published version is never changed or re-tagged: the workflow refuses to replace an existing
+release, and a fix is always a new version. Merges that only touch Markdown files do not release.
+
+To publish a specific version or a pre-release, push a tag instead; a suffix such as
+`v1.1.0-rc.1` marks it as a pre-release. The tag must be a valid semantic version without build
+metadata, and higher than every existing tag, or the workflow fails:
 
 ```
-git tag v2.1.0-beta.1
-git push origin v2.1.0-beta.1
+git tag v1.1.0-rc.1
+git push origin v1.1.0-rc.1
 ```
 
 ## Wiki
