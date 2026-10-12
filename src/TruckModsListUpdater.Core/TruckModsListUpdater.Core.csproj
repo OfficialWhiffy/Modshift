@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>TruckModsListUpdater.Core</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="TruckModsListUpdater.Core.Tests" />
+    <EmbeddedResource Include="Presets\BuiltIn\*.json" />
+  </ItemGroup>
+</Project>

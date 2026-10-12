@@ -1,0 +1,94 @@
+<Window x:Class="TruckModsListUpdater.App.Views.CleanupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:TruckModsListUpdater.App.ViewModels"
+        xmlns:mods="clr-namespace:TruckModsListUpdater.Core.Mods;assembly=TruckModsListUpdater.Core"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:CleanupViewModel}"
+        Title="Clean up mod folder" Width="860" Height="560" MinWidth="650" MinHeight="400"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <TabControl Margin="12">
+        <TabItem Header="Suggestions">
+            <Grid Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,8" Style="{StaticResource Muted}"
+                           Text="The game loads everything in the mod folder. Archived mods are moved to a folder the game ignores and can be restored at any time. Nothing is deleted." />
+                <ListBox Grid.Row="1" ItemsSource="{Binding Suggestions}" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:CleanupViewModel+SuggestionItem}">
+                            <Grid Margin="0,3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="120" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox IsChecked="{Binding IsSelected}" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                    <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap">
+                                        <Run Text="{Binding DisplayName, Mode=OneWay}" /> — <Run Text="{Binding Explanation, Mode=OneWay}" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <TextBlock Grid.Column="2" Text="{Binding ReasonText}" VerticalAlignment="Center" Style="{StaticResource Muted}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <DockPanel Grid.Row="2" Margin="0,10,0,0">
+                    <Button DockPanel.Dock="Right" Content="Move selected to archive" Command="{Binding ArchiveSelectedCommand}" FontWeight="SemiBold" />
+                    <TextBlock Text="Nothing to clean up." VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Suggestions.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </DockPanel>
+            </Grid>
+        </TabItem>
+
+        <TabItem Header="Archive">
+            <Grid Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding ArchiveDir, StringFormat='Archived mods in {0}'}" Style="{StaticResource Muted}" Margin="0,0,0,8" TextWrapping="Wrap" />
+                <ListBox Grid.Row="1" ItemsSource="{Binding Archived}" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type mods:ArchivedMod}">
+                            <Grid Margin="0,3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                    <TextBlock Style="{StaticResource Muted}">
+                                        <Run Text="{Binding Reason, Mode=OneWay}" /> · <Run Text="{Binding ArchivedLocal, Mode=OneWay, StringFormat='{}{0:d MMM yyyy HH:mm}'}" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Restore" VerticalAlignment="Center"
+                                        Command="{Binding DataContext.RestoreCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button Grid.Row="2" HorizontalAlignment="Right" Margin="0,10,0,0" Content="Open archive folder" Command="{Binding OpenArchiveFolderCommand}" />
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>

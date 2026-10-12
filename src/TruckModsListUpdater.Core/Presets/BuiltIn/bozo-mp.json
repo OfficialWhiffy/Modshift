@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "name": "Bozo (mp)",
+  "game": "ets2",
+  "createdUtc": "2026-09-28T00:00:00Z",
+  "mods": [
+    {
+      "packageId": "mod_workshop_package.00000000E2C34C91",
+      "displayName": "ProMods Official Hotfix"
+    },
+    {
+      "packageId": "mod_workshop_package.00000000942BBD57",
+      "displayName": "ProMods High Quality Background Map"
+    },
+    {
+      "packageId": "mod_workshop_package.00000000C75B91DB",
+      "displayName": "Herr Löblichs Smoother Traffic"
+    },
+    {
+      "packageId": "mod_workshop_package.0000000049AC5BAF",
+      "displayName": "Real Traffic Density ETS2"
+    },
+    {
+      "packageId": "mod_workshop_package.0000000026A8B6D4",
+      "displayName": "Sound Fixes Pack v24.44 - ETS2"
+    },
+    {
+      "packageId": "mod_workshop_package.000000002A84AE38",
+      "displayName": "Realistic Truck Physics Mod v9.0.5 (by Frkn64)"
+    },
+    {
+      "packageId": "mod_workshop_package.00000000B8F555D0",
+      "displayName": "Realistic Brutal Graphics And Weather"
+    },
+    {
+      "packageId": "mod_workshop_package.000000007DD42A7F",
+      "displayName": "Real European Companies Reloaded [DX11]"
+    },
+    {
+      "packageId": "mod_workshop_package.00000000B038ACA8",
+      "displayName": "Real Company Trailers & Trucks [TRAFFIC ONLY]"
+    },
+    {
+      "packageId": "mod_workshop_package.00000000B70CC741",
+      "displayName": "Asphalt_improved_1.2_ETS_4k"
+    },
+    {
+      "packageId": "161MaghrebFix",
+      "displayName": "161MaghrebFix"
+    },
+    {
+      "packageId": "ROEX53PMME284",
+      "displayName": "ROEX53PMME284"
+    },
+    {
+      "packageId": "53RXF1",
+      "displayName": "53FRX1"
+    },
+    {
+      "packageId": "53RXF2",
+      "displayName": "53FRX2"
+    },
+    {
+      "packageId": "53RXF3",
+      "displayName": "53FRX3"
+    },
+    {
+      "packageId": "53RXF4",
+      "displayName": "53FRX4"
+    },
+    {
+      "packageId": "promods-cap-v161",
+      "displayName": "ProMods Cabin Accessories Pack"
+    },
+    {
+      "packageId": "promods-tcp-def-companies-v161",
+      "displayName": "ProMods Trailer and Company Pack (Company Definition)"
+    },
+    {
+      "packageId": "promods-tcp-companies-v161",
+      "displayName": "ProMods Trailer and Company Pack (Company Package)"
+    },
+    {
+      "packageId": "promods-tcp-parked-v161",
+      "displayName": "ProMods Trailer and Company Pack - Replacement Parked Trailers"
+    },
+    {
+      "packageId": "promods-tcp-def-trailers-replacement-v161",
+      "displayName": "ProMods Trailer and Company Pack (Replacement Trailer Definition)"
+    },
+    {
+      "packageId": "promods-tcp-def-trailers-main-v161",
+      "displayName": "ProMods Trailer and Company Pack (Main Trailer Definition)"
+    },
+    {
+      "packageId": "promods-tcp-trailers-v161",
+      "displayName": "ProMods Trailer and Company Pack (Trailer Package)"
+    },
+    {
+      "packageId": "cnx-pm-eu-v284-v104",
+      "displayName": "ProMods Maghreb (Europe Connector)"
+    },
+    {
+      "packageId": "promods-ma-defmap-v104",
+      "displayName": "ProMods Maghreb (Def & Map Package)"
+    },
+    {
+      "packageId": "promods-ma-assets-v104",
+      "displayName": "ProMods Maghreb (Assets Package)"
+    },
+    {
+      "packageId": "promods-ma-models-v104",
+      "displayName": "ProMods Maghreb (Models Package)"
+    },
+    {
+      "packageId": "promods-me-defmap-v284",
+      "displayName": "ProMods Middle-East Add-on (Def & Map Package)"
+    },
+    {
+      "packageId": "promods-me-assets-v284",
+      "displayName": "ProMods Middle-East Add-on (Assets Package)"
+    },
+    {
+      "packageId": "promods-eu-def-v284",
+      "displayName": "ProMods Definition Package"
+    },
+    {
+      "packageId": "promods-eu-map-v284",
+      "displayName": "ProMods Map Package"
+    },
+    {
+      "packageId": "promods-eu-assets-v284",
+      "displayName": "ProMods Assets Package"
+    },
+    {
+      "packageId": "promods-eu-model1-v284",
+      "displayName": "ProMods Models Package 1"
+    },
+    {
+      "packageId": "promods-eu-model2-v284",
+      "displayName": "ProMods Models Package 2"
+    },
+    {
+      "packageId": "promods-eu-model3-v284",
+      "displayName": "ProMods Models Package 3"
+    },
+    {
+      "packageId": "promods-eu-media-v284",
+      "displayName": "ProMods Media Package"
+    },
+    {
+      "packageId": "promods-eu-dlcsupport-v284",
+      "displayName": "ProMods DLC Support Package"
+    },
+    {
+      "packageId": "promods-tgs-defmap-v170",
+      "displayName": "ProMods The Great Steppe (Def & Map Package)"
+    },
+    {
+      "packageId": "promods-tgs-assets-v170",
+      "displayName": "ProMods The Great Steppe (Assets Package)"
+    }
+  ]
+}

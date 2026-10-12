@@ -1,0 +1,89 @@
+name: Release
+
+# Every merge to master publishes a release. The next version is the latest vMAJOR.MINOR.PATCH tag
+# plus a patch bump, or a minor/major bump when the merged PR carries a "minor" or "major" label.
+# To publish a specific version or a pre-release instead, push a tag: git tag v2.1.0-beta.1 && git push origin v2.1.0-beta.1
+# Either way the version is handed to MinVer, which stamps it into the executable.
+on:
+  push:
+    branches: [master]
+    paths-ignore: ["**/*.md", "**/.gitignore", "**/.gitattributes"]
+    tags: ["v*"]
+
+# Two merges in quick succession must not pick the same version.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # MinVer reads the version from tags
+
+      - name: Determine version
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ($env:GITHUB_REF_TYPE -eq 'tag') {
+            $tag = $env:GITHUB_REF_NAME
+            if ($tag -notmatch '^v(\d+\.\d+\.\d+)(-[0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?$') {
+              throw "Tag '$tag' is not vMAJOR.MINOR.PATCH or vMAJOR.MINOR.PATCH-suffix"
+            }
+            $version = $tag.Substring(1)
+          } else {
+            # Only plain release tags count; pre-releases and the old untidy tags (V2.0.0, v.1.4) are ignored.
+            $latest = git tag --list 'v*' |
+              Where-Object { $_ -cmatch '^v\d+\.\d+\.\d+$' } |
+              ForEach-Object { [version]$_.Substring(1) } |
+              Sort-Object -Descending |
+              Select-Object -First 1
+
+            $labels = gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq '.[].labels[].name'
+            if ($labels -contains 'major')     { $next = [version]"$($latest.Major + 1).0.0" }
+            elseif ($labels -contains 'minor') { $next = [version]"$($latest.Major).$($latest.Minor + 1).0" }
+            else                               { $next = [version]"$($latest.Major).$($latest.Minor).$($latest.Build + 1)" }
+
+            # Matches MinVerMinimumMajorMinor in Directory.Build.props; also covers "no tags yet".
+            if ($null -eq $latest -or $next -lt [version]'2.0.0') { $next = [version]'2.0.0' }
+            $version = $next.ToString(3)
+          }
+          Write-Host "Releasing v$version"
+          "VERSION=$version" >> $env:GITHUB_ENV
+          "PRERELEASE=$($version.Contains('-').ToString().ToLower())" >> $env:GITHUB_ENV
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Test
+        run: dotnet test TruckModsListUpdater.slnx --configuration Release --filter "Category!=LocalMachine"
+
+      - name: Publish single executable
+        run: dotnet publish src/TruckModsListUpdater.App/TruckModsListUpdater.App.csproj --configuration Release --runtime win-x64 --self-contained false --output ./publish -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=none -p:MinVerVersionOverride=${{ env.VERSION }}
+
+      - name: Verify executable version matches the release
+        shell: pwsh
+        run: |
+          $actual = (Get-Item ./publish/Modshift.exe).VersionInfo.ProductVersion
+          if (-not $actual.StartsWith($env:VERSION)) {
+            throw "Executable reports '$actual' but the release is 'v$($env:VERSION)'"
+          }
+
+      - name: Create ZIP archive
+        run: Compress-Archive -Path ./publish/Modshift.exe -DestinationPath ./Modshift-${{ env.VERSION }}-win-x64.zip
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          target_commitish: ${{ github.sha }}
+          files: ./Modshift-${{ env.VERSION }}-win-x64.zip
+          generate_release_notes: true
+          prerelease: ${{ env.PRERELEASE == 'true' }}

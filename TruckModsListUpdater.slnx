@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TruckModsListUpdater.App/TruckModsListUpdater.App.csproj" />
+    <Project Path="src/TruckModsListUpdater.Core/TruckModsListUpdater.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TruckModsListUpdater.App.Tests/TruckModsListUpdater.App.Tests.csproj" />
+    <Project Path="tests/TruckModsListUpdater.Core.Tests/TruckModsListUpdater.Core.Tests.csproj" />
+  </Folder>
+</Solution>

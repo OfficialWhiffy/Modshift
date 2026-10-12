@@ -1,0 +1,287 @@
+<Window x:Class="TruckModsListUpdater.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dd="urn:gong-wpf-dragdrop"
+        xmlns:vm="clr-namespace:TruckModsListUpdater.App.ViewModels"
+        xmlns:views="clr-namespace:TruckModsListUpdater.App.Views"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:MainViewModel}"
+        Title="Modshift"
+        Width="1400" Height="860" MinWidth="1000" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        Closing="OnClosing"
+        AllowDrop="True" DragOver="OnWindowDragOver" Drop="OnWindowDrop">
+
+    <Window.Resources>
+        <!-- One row in either mod list. -->
+        <DataTemplate x:Key="ModRow" DataType="{x:Type vm:ModItemViewModel}">
+            <Grid Margin="0,2" ToolTip="{Binding IssueSummary}" ToolTipService.IsEnabled="{Binding HasWarnings}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Border Width="64" Height="38" CornerRadius="3" ClipToBounds="True" Background="#22808080" Margin="0,0,10,0">
+                    <Image Source="{Binding IconPath, Converter={StaticResource ThumbConverter}}" Stretch="UniformToFill" />
+                </Border>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Subtitle}" Style="{StaticResource Muted}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+                <Ellipse Grid.Column="2" Width="10" Height="10" Margin="8,0,4,0" VerticalAlignment="Center"
+                         Fill="{Binding Severity, Converter={StaticResource SeverityBrush}}"
+                         Visibility="{Binding HasWarnings, Converter={StaticResource BoolToVisibility}}" />
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid Margin="16,12,16,8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Top bar: game, profile, actions -->
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,10">
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                <ComboBox Width="230" ItemsSource="{Binding Games}" SelectedItem="{Binding SelectedGame}"
+                          DisplayMemberPath="Game.DisplayName" ToolTip="Game" />
+                <ComboBox Width="280" Margin="8,0,0,0" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}" ToolTip="Profile">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:ProfileItemViewModel}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding Summary}" Style="{StaticResource Muted}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Text="{Binding GameVersionText}" VerticalAlignment="Center" Margin="12,0,0,0" Style="{StaticResource Muted}" />
+            </StackPanel>
+
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Content="Install mods…" Command="{Binding InstallModsCommand}" Margin="0,0,8,0"
+                        ToolTip="Install .scs or .zip mods (you can also drop files anywhere on this window)" />
+                <Button Content="Presets…" Command="{Binding ShowPresetsCommand}" Margin="0,0,8,0" ToolTip="Save and apply named mod lists" />
+                <Button Content="Rescan" Command="{Binding RescanCommand}" Margin="0,0,8,0" ToolTip="Look for new or changed mod files" />
+                <Menu VerticalAlignment="Center" Margin="0,0,8,0">
+                    <MenuItem Header="More">
+                        <MenuItem Header="Clean up mod folder…" Command="{Binding CleanUpCommand}" />
+                        <Separator />
+                        <MenuItem Header="Open mod folder" Command="{Binding OpenModFolderCommand}" />
+                        <MenuItem Header="Open profile folder" Command="{Binding OpenProfileFolderCommand}" />
+                        <Separator />
+                        <MenuItem Header="Restore backup" ItemsSource="{Binding Backups}" SubmenuOpened="OnRestoreMenuOpened">
+                            <MenuItem.ItemContainerStyle>
+                                <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                    <Setter Property="Header" Value="{Binding CreatedLocal}" />
+                                    <Setter Property="HeaderStringFormat" Value="{}{0:dddd d MMM yyyy, HH:mm:ss}" />
+                                    <Setter Property="Command" Value="{Binding DataContext.RestoreBackupCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                    <Setter Property="CommandParameter" Value="{Binding}" />
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+                <Button Content="Revert" Command="{Binding RevertCommand}" Margin="0,0,8,0" ToolTip="Discard unsaved changes" />
+                <Button Content="Apply changes" Command="{Binding ApplyCommand}" Margin="0,0,8,0" MinWidth="120" FontWeight="SemiBold"
+                        ToolTip="Write the mod list to the profile (a backup is made first)" />
+                <Button Content="▶  Launch game" Command="{Binding LaunchCommand}" MinWidth="130" />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Warning banner -->
+        <Border Grid.Row="1" Background="#33F2A93B" BorderBrush="{StaticResource BannerBrush}" BorderThickness="1" CornerRadius="4"
+                Padding="10,6" Margin="0,0,0,10" Visibility="{Binding Banner, Converter={StaticResource NullToCollapsed}}">
+            <TextBlock Text="{Binding Banner}" TextWrapping="Wrap" />
+        </Border>
+
+        <!-- Lists and details -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="260" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="260" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="340" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Available -->
+            <DockPanel Grid.Column="0">
+                <TextBlock DockPanel.Dock="Top" Text="{Binding AvailableHeader}" Style="{StaticResource SectionHeader}" />
+                <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="140" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="Search by name, id, author or category" />
+                    <ComboBox Grid.Column="1" Margin="6,0,0,0" ItemsSource="{Binding Filters}" SelectedItem="{Binding Filter}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource FilterName}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+                <ListBox ItemsSource="{Binding AvailableView}" SelectedItem="{Binding SelectedAvailableMod}"
+                         ItemTemplate="{StaticResource ModRow}" HorizontalContentAlignment="Stretch" SelectionMode="Extended"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingPanel.ScrollUnit="Pixel"
+                         dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}"
+                         MouseDoubleClick="OnAvailableDoubleClick" />
+            </DockPanel>
+
+            <!-- Move buttons -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0">
+                <Button Content="→" Style="{StaticResource IconButton}" Command="{Binding EnableCommand}" ToolTip="Enable (adds to the top of the list)" />
+                <Button Content="←" Style="{StaticResource IconButton}" Command="{Binding DisableCommand}" ToolTip="Disable" />
+            </StackPanel>
+
+            <!-- Active -->
+            <DockPanel Grid.Column="2">
+                <DockPanel DockPanel.Dock="Top">
+                    <Button DockPanel.Dock="Right" Content="Fix missing mods" Command="{Binding FixMissingModsCommand}" Margin="8,0,0,6" Padding="8,2"
+                            ToolTip="Replace mods whose files are gone with the installed version of the same mod"
+                            Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={StaticResource BoolToVisibility}}" />
+                    <TextBlock Text="{Binding ActiveHeader}" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" />
+                </DockPanel>
+                <ListBox x:Name="ActiveList" ItemsSource="{Binding ActiveMods}" SelectedItem="{Binding SelectedActiveMod}"
+                         ItemTemplate="{StaticResource ModRow}" HorizontalContentAlignment="Stretch"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingPanel.ScrollUnit="Pixel"
+                         dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}"
+                         MouseDoubleClick="OnActiveDoubleClick" KeyDown="OnActiveKeyDown" />
+            </DockPanel>
+
+            <!-- Order buttons -->
+            <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="8,0">
+                <Button Content="⤒" Style="{StaticResource IconButton}" Command="{Binding MoveToTopCommand}" ToolTip="Move to top (highest priority)" />
+                <Button Content="↑" Style="{StaticResource IconButton}" Command="{Binding MoveUpCommand}" ToolTip="Move up (Alt+Up)" />
+                <Button Content="↓" Style="{StaticResource IconButton}" Command="{Binding MoveDownCommand}" ToolTip="Move down (Alt+Down)" />
+                <Button Content="⤓" Style="{StaticResource IconButton}" Command="{Binding MoveToBottomCommand}" ToolTip="Move to bottom (lowest priority)" />
+            </StackPanel>
+
+            <!-- Details -->
+            <Border Grid.Column="4" BorderBrush="#33808080" BorderThickness="1" CornerRadius="6" Padding="12">
+                <Grid>
+                    <TextBlock Text="Select a mod to see its details." Style="{StaticResource Muted}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="{Binding SelectedMod, Converter={StaticResource NullToCollapsed}, ConverterParameter=invert}" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" DataContext="{Binding SelectedMod}"
+                                  Visibility="{Binding Converter={StaticResource NullToCollapsed}}">
+                        <StackPanel>
+                            <Border CornerRadius="4" ClipToBounds="True" Background="#22808080" Height="178" Margin="0,0,0,10">
+                                <Image Source="{Binding IconPath, Converter={StaticResource IconConverter}}" Stretch="Uniform" />
+                            </Border>
+                            <TextBlock Text="{Binding DisplayName}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding PackageId}" Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,2,0,8" />
+
+                            <ItemsControl ItemsSource="{Binding Issues}" Margin="0,0,0,8">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{Binding Severity, Converter={StaticResource SeverityBrush}}" BorderThickness="3,0,0,0" Padding="8,4" Margin="0,2">
+                                            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Margin" Value="0,1,10,1" />
+                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </Grid.Resources>
+                                <TextBlock Grid.Row="0" Text="Version" Opacity="0.7" /><TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Version, TargetNullValue=–}" />
+                                <TextBlock Grid.Row="1" Text="Author" Opacity="0.7" /><TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Author, TargetNullValue=–}" />
+                                <TextBlock Grid.Row="2" Text="Source" Opacity="0.7" /><TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SourceText}" />
+                                <TextBlock Grid.Row="3" Text="Category" Opacity="0.7" /><TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Categories}" />
+                                <TextBlock Grid.Row="4" Text="Game versions" Opacity="0.7" /><TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CompatibleVersions}" />
+                                <TextBlock Grid.Row="5" Text="Needs DLC" Opacity="0.7" /><TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding DlcDependencies}" />
+                                <TextBlock Grid.Row="6" Text="Size" Opacity="0.7" /><TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SizeText}" />
+                            </Grid>
+
+                            <TextBlock Text="{Binding Path}" Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Button Content="Show in Explorer" Margin="0,0,8,0"
+                                        Command="{Binding DataContext.ShowInExplorerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}" Visibility="{Binding Path, Converter={StaticResource NullToCollapsed}}" />
+                                <Button Content="Move to archive" Margin="0,0,8,0"
+                                        Command="{Binding DataContext.ArchiveModCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}" Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={StaticResource BoolToVisibility}}" />
+                                <TextBlock VerticalAlignment="Center" Visibility="{Binding WorkshopUrl, Converter={StaticResource NullToCollapsed}}">
+                                    <Hyperlink NavigateUri="{Binding WorkshopUrl}" RequestNavigate="OnNavigate">Workshop page</Hyperlink>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <ItemsControl ItemsSource="{Binding VisibleDescriptionLines}" Opacity="0.95">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="{Binding Indent, Converter={StaticResource IndentMargin}}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Bullet}" Width="16" Margin="0,1,0,1"
+                                                       Visibility="{Binding Bullet, Converter={StaticResource NullToCollapsed}}" />
+                                            <TextBlock Grid.Column="1" Margin="0,1" TextWrapping="Wrap"
+                                                       views:DescriptionText.Spans="{Binding Spans}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Margin="0,6,0,0" Visibility="{Binding CanToggleDescription, Converter={StaticResource BoolToVisibility}}">
+                                <Hyperlink Command="{Binding ToggleDescriptionCommand}"><Run Text="{Binding DescriptionToggleLabel, Mode=OneWay}" /></Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Status bar -->
+        <DockPanel Grid.Row="3" Margin="0,8,0,0">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <TextBlock Text="Unsaved changes" Foreground="{StaticResource BannerBrush}" Margin="0,0,16,0"
+                           Visibility="{Binding HasChanges, Converter={StaticResource BoolToVisibility}}" />
+                <TextBlock Text="Steam Cloud profile" Style="{StaticResource Muted}" Margin="0,0,16,0"
+                           Visibility="{Binding IsCloudProfile, Converter={StaticResource BoolToVisibility}}" />
+                <Ellipse Width="9" Height="9" Margin="0,0,6,0" VerticalAlignment="Center">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="#4CAF50" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsGameRunning}" Value="True">
+                                    <Setter Property="Fill" Value="#E5484D" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <TextBlock>
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+                            <Setter Property="Text" Value="Game not running" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsGameRunning}" Value="True">
+                                    <Setter Property="Text" Value="Game running" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+            <TextBlock Text="{Binding StatusText}" Style="{StaticResource Muted}" TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+        <TextBlock Grid.Row="3" HorizontalAlignment="Center" Text="Tip: drop .scs or .zip files anywhere to install them" Style="{StaticResource Muted}" Opacity="0.45" Margin="0,8,0,0" />
+    </Grid>
+</Window>
