@@ -75,6 +75,5 @@ release.
 
 MIT. See [LICENSE](LICENSE) and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
-Modshift was previously called Truck Mod Manager, and before that TruckModsListUpdater. Your
-presets, settings and backups move over automatically the first time you start it. It is a fan-made tool and is not made
+It is a fan-made tool and is not made
 by or connected to SCS Software.
