@@ -37,5 +37,7 @@ public sealed record AppPaths(string RoamingDir, string LocalDir)
     public string PresetsDir => Path.Combine(RoamingDir, "presets");
     public string CacheDir => Path.Combine(LocalDir, "cache");
     public string BackupsDir => Path.Combine(LocalDir, "backups");
+    /// <summary>Backups of settings files changed by Modshift Profile Copy (see ConfigBackups).</summary>
+    public string ConfigBackupsDir => Path.Combine(LocalDir, "config-backups");
     public string LogsDir => Path.Combine(LocalDir, "logs");
 }

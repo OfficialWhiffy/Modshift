@@ -2,9 +2,11 @@
   <Folder Name="/src/">
     <Project Path="src/TruckModsListUpdater.App/TruckModsListUpdater.App.csproj" />
     <Project Path="src/TruckModsListUpdater.Core/TruckModsListUpdater.Core.csproj" />
+    <Project Path="src/TruckModsListUpdater.ProfileCopy/TruckModsListUpdater.ProfileCopy.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/TruckModsListUpdater.App.Tests/TruckModsListUpdater.App.Tests.csproj" />
     <Project Path="tests/TruckModsListUpdater.Core.Tests/TruckModsListUpdater.Core.Tests.csproj" />
+    <Project Path="tests/TruckModsListUpdater.ProfileCopy.Tests/TruckModsListUpdater.ProfileCopy.Tests.csproj" />
   </Folder>
 </Solution>

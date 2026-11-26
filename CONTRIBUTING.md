@@ -34,8 +34,24 @@ the game is not installed. CI does not run them.
 |---|---|
 | `src/TruckModsListUpdater.Core` | Game and Steam discovery, SII decoding (ScsC, 3nK, binary, text), HashFS v1/v2 and ZIP readers, mod scanner, profile writer, installer, archive, presets |
 | `src/TruckModsListUpdater.App` | WPF user interface (MVVM) |
+| `src/TruckModsListUpdater.ProfileCopy` | *Modshift Profile Copy* (`Modshift.ProfileCopy.exe`): a separate WPF app that copies settings files (`config.cfg`, controls, `config_local.cfg`, gearbox layouts) from one profile to another |
 | `tests/TruckModsListUpdater.Core.Tests` | Unit tests with generated fixtures, plus the `LocalMachine` tests |
 | `tests/TruckModsListUpdater.App.Tests` | View model tests |
+| `tests/TruckModsListUpdater.ProfileCopy.Tests` | View model tests for Profile Copy |
+
+## How settings are copied (Profile Copy)
+
+`ProfileConfigCopier` in Core copies whole files and never touches `profile.sii`, `profile.bak.sii`
+or saves. A Steam Cloud profile keeps `config.cfg` in the Steam Cloud folder and its controls, local
+settings and gearbox layouts in `Documents\…\steam_profiles\<hex>`; a local profile keeps them all
+next to `profile.sii`. Every copy refuses while the game runs or when a file changed since the
+preview, backs up the target files it changes to `%LOCALAPPDATA%\Modshift\config-backups`, verifies
+each written file and puts the earlier ones back if a later one fails. Files only the target has
+are kept. A restore removes files the copy added, unless they changed since.
+
+```
+dotnet publish src/TruckModsListUpdater.ProfileCopy -c Release -p:PublishProfile=win-x64
+```
 
 ## How profiles are written
 
